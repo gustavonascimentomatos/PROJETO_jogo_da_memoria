@@ -1,0 +1,22 @@
+
+body {
+    margin: 10px;
+}
+#all-card {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px; /* Espaçamento entre os cards */
+    justify-content: center;
+  }
+  .cards {
+    display: flex;
+    justify-content: center;
+  }
+
+  .buttons {
+    margin-top: 10px;
+    gap: 20px;
+    display: flex;
+    justify-content: center;
+  }
+

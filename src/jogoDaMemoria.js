@@ -37,7 +37,7 @@ class jogoDaMemoria {
 
         setTimeout(() => {
             this.esconderHerois(copias)
-        }, 1500)
+        }, 5000)
     }
 
     esconderHerois(herois) {

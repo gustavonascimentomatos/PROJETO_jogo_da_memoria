@@ -1,4 +1,5 @@
 const ID_CONTEUDO = "all-card"
+const ID_BTN_JOGAR = "jogar"
 
 class Tela {
     static obterCodigoHTML(item) {
@@ -25,5 +26,10 @@ class Tela {
     static atualizarImagens(itens) {
         const codigoHTML = Tela.gerarStringHTMLPelaImagem(itens)
         Tela.alterarConteudoHTML(codigoHTML)
+    }
+
+    static configurarBotaoJogar(funcaoOnClick) {
+        const btnJogar = document.getElementById(ID_BTN_JOGAR)
+        btnJogar.onclick = funcaoOnClick 
     }
 }

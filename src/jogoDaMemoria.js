@@ -1,25 +1,27 @@
 class jogoDaMemoria {
-    constructor({ tela }) {
+    constructor({ tela, util }) {
         this.tela = tela
-
+        this.util = util
         this.heroisIniciais = [
-            { img: './files/batman.png', name: 'Batman' },
-            { img: './files/gandalf.png', name: 'Gandalf' },
-            { img: './files/mega.png', name: 'Mega' },
-            { img: './files/flash.png', name: 'Flash' },
-            { img: './files/groot.png', name: 'Groot ' },
-            { img: './files/wolverine.png', name: 'Wolverine' },
+            { img: './files/batman.png', nome: 'Batman' },
+            { img: './files/gandalf.png', nome: 'Gandalf' },
+            { img: './files/mega.png', nome: 'Mega' },
+            { img: './files/flash.png', nome: 'Flash' },
+            { img: './files/groot.png', nome: 'Groot ' },
+            { img: './files/wolverine.png', nome: 'Wolverine' },
         ]
         this.iconePadrao = './files/avatar.png'
         this.heroisEscondidos = []
+        this.heroisSelecionados = []
     }
 
     inicializar() {
         this.tela.atualizarImagens(this.heroisIniciais);
         this.tela.configurarBotaoJogar(this.jogar.bind(this));
+        this.tela.configurarBotaoVericarSelecao(this.verificarSelecão.bind(this))
     }
 
-    embaralhar() {
+    async embaralhar() {
         const copias = this.heroisIniciais
 
         // Duplicar os cards
@@ -34,10 +36,11 @@ class jogoDaMemoria {
         .sort(() => Math.random() - 0.5)
 
         this.tela.atualizarImagens(copias)
-
-        setTimeout(() => {
-            this.esconderHerois(copias)
-        }, 5000)
+        this.tela.exibirCarregando()
+        
+        await this.util.timeout(3000)
+        this.esconderHerois(copias)
+        this.tela.exibirCarregando(false)
     }
 
     esconderHerois(herois) {
@@ -51,6 +54,42 @@ class jogoDaMemoria {
         this.tela.atualizarImagens(heroisOcultos)
         this.heroisOcultos = heroisOcultos 
     }
+
+    exibirHerois(nomeDoHeroi) {
+        // Procura pelo nome em heroisIniciais
+        const { img } = this.heroisIniciais.find(({ nome }) => nomeDoHeroi === nome)
+        this.tela.exibirHerois(nomeDoHeroi, img)
+    }
+
+    verificarSelecão(id, nome) {
+        const item = { id, nome }
+        const heroisSelecionados = this.heroisSelecionados.length
+
+        switch (heroisSelecionados) {
+            case 0:      
+                // Adiciona a escolha na lista, pesterando pelo proximo click
+                this.heroisSelecionados.push(item)
+                break;
+            case 1:
+                // Se a quantidade de escolhidos for 1, significa que o usuário só pode escolher mais um
+                // Obtemos o primeiro item para comparação
+                const [ opcao1 ] = this.heroisSelecionados
+                // Zerar a lista anterior para não selecionar mais de dois
+                this.heroisSelecionados = []
+
+                // Conferir se os nomes são iguais e os IDs diferentes
+                if (opcao1.nome === item.nome && opcao1.id !== item.id) {
+                    this.exibirHerois(item.nome)
+                    this.tela.exibirMensagem()
+                    return
+                }
+                this.tela.exibirMensagem(false)
+                break;
+            default:
+                break;
+        }
+    }
+
 
     jogar() {
         this.embaralhar()

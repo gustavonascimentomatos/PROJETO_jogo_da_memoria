@@ -18,7 +18,8 @@ class jogoDaMemoria {
     inicializar() {
         this.tela.atualizarImagens(this.heroisIniciais);
         this.tela.configurarBotaoJogar(this.jogar.bind(this));
-        this.tela.configurarBotaoVericarSelecao(this.verificarSelecão.bind(this))
+        this.tela.configurarBotaoVericarSelecao(this.verificarSelecão.bind(this));
+        this.tela.configurarBotaoMostrarTudo(this.mostrarHeroisEscondidos.bind(this))
     }
 
     async embaralhar() {
@@ -37,8 +38,11 @@ class jogoDaMemoria {
 
         this.tela.atualizarImagens(copias)
         this.tela.exibirCarregando()
+
+        const idDoIntervalo = this.tela.iniciarContador()
         
         await this.util.timeout(3000)
+        this.tela.limparContador(idDoIntervalo)
         this.esconderHerois(copias)
         this.tela.exibirCarregando(false)
     }
@@ -52,7 +56,7 @@ class jogoDaMemoria {
             img: this.iconePadrao
         }))
         this.tela.atualizarImagens(heroisOcultos)
-        this.heroisOcultos = heroisOcultos 
+        this.heroisEscondidos = heroisOcultos 
     }
 
     exibirHerois(nomeDoHeroi) {
@@ -66,7 +70,7 @@ class jogoDaMemoria {
         const heroisSelecionados = this.heroisSelecionados.length
 
         switch (heroisSelecionados) {
-            case 0:      
+            case 0:    
                 // Adiciona a escolha na lista, pesterando pelo proximo click
                 this.heroisSelecionados.push(item)
                 break;
@@ -90,6 +94,14 @@ class jogoDaMemoria {
         }
     }
 
+    mostrarHeroisEscondidos() {
+        const heroisEscondidos = this.heroisEscondidos
+        for (const heroi of heroisEscondidos) {
+            const { img } = this.heroisIniciais.find(item => item.nome === heroi.nome)
+            heroi.img = img
+        }
+        this.tela.atualizarImagens(heroisEscondidos)
+    }
 
     jogar() {
         this.embaralhar()
